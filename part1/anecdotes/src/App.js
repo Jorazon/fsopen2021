@@ -20,8 +20,16 @@ const App = () => {
 		setVotes(copy);
 	};
 
+	const indexOfTop = () => {
+		const top = votes.reduce((topVoteCount, voteCount) =>
+			voteCount > topVoteCount ? voteCount : topVoteCount,
+		);
+		return votes.findIndex((voteCount) => voteCount === top);
+	};
+
 	return (
 		<>
+			<h2>Anecdote of the day</h2>
 			{anecdotes[selected]}
 			<br />
 			has {votes[selected] || 0} votes
@@ -30,6 +38,8 @@ const App = () => {
 			<button onClick={() => setSelected((anecdotes.length * Math.random()) | 0)}>
 				next anecdote
 			</button>
+			<h2>Anecdote with most votes</h2>
+			{anecdotes[indexOfTop()]}
 		</>
 	);
 };
