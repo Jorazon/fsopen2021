@@ -15,11 +15,9 @@ const App = () => {
 	const [selected, setSelected] = useState(0);
 
 	const vote = () => {
-		setVotes([
-			...votes.slice(0, selected),
-			votes[selected] + 1,
-			...votes.slice(selected + 1),
-		]);
+		const copy = [...votes];
+		copy[selected] += 1;
+		setVotes(copy);
 	};
 
 	return (
