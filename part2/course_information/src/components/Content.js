@@ -4,8 +4,8 @@ import Part from "./Part";
 const Content = (props) => {
 	return (
 		<>
-			{props.course.parts.map(({ name, exercises }, index) => (
-				<Part name={name} exercises={exercises} key={index} />
+			{props.course.parts.map(({ name, exercises, id }) => (
+				<Part name={name} exercises={exercises} key={id} />
 			))}
 		</>
 	);
