@@ -2,10 +2,13 @@ import React from "react";
 
 import Country from "./Country";
 
-const Countries = ({ countries, search }) => {
+const Countries = ({ countries, searchState }) => {
+	const [search, setSearch] = searchState;
+
 	const matches = countries.filter((country) =>
 		country.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
 	);
+
 	if (matches.length === 1) {
 		return <Country country={matches[0]} />;
 	} else if (matches.length <= 10) {
@@ -14,8 +17,13 @@ const Countries = ({ countries, search }) => {
 				<tbody>
 					{matches.map((country) => {
 						return (
-							<tr key={country.alpha3Code}>
-								<td>{country.name}</td>
+							<tr key={country.numericCode}>
+								<td>
+									{`${country.name} `}
+									<button type="button" onClick={() => setSearch(country.name)}>
+										show
+									</button>
+								</td>
 							</tr>
 						);
 					})}

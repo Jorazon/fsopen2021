@@ -17,7 +17,7 @@ const App = () => {
 			<form>
 				find countries{" "}
 				<input value={search} onChange={(event) => setSearch(event.target.value)} />
-				<Countries countries={countries} search={search} />
+				<Countries countries={countries} searchState={[search, setSearch]} />
 			</form>
 		</>
 	);
