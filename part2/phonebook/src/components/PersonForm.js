@@ -13,8 +13,22 @@ const PersonForm = ({ personsState, nameState, numberState }) => {
 	};
 	const addPerson = (event) => {
 		event.preventDefault();
-		if (persons.some((person) => person.name === newName)) {
-			alert(`${newName} is already added to phonebook`);
+		const existing = persons.find((person) => person.name === newName);
+		if (existing) {
+			if (
+				window.confirm(
+					`${existing.name} is already added to phonebook, replace the opld number with a sew one?`,
+				)
+			) {
+				axios
+					.put(`http://localhost:3001/persons/${existing.id}`, {
+						...existing,
+						number: newNumber,
+					})
+					.then((response) => {
+						setPersons(persons.map((p) => (p.id !== existing.id ? p : response.data)));
+					});
+			}
 			return;
 		}
 		const newPerson = {
