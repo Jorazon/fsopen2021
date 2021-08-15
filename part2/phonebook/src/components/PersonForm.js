@@ -1,16 +1,11 @@
 import axios from "axios";
 import React from "react";
 
-const PersonForm = ({ personsState, nameState, numberState }) => {
+const PersonForm = ({ personsState, nameState, numberState, showNotification }) => {
 	const [persons, setPersons] = personsState;
 	const [newName, setNewName] = nameState;
 	const [newNumber, setNewNumber] = numberState;
-	const updateNewName = (event) => {
-		setNewName(event.target.value);
-	};
-	const updateNewNumber = (event) => {
-		setNewNumber(event.target.value);
-	};
+
 	const addPerson = (event) => {
 		event.preventDefault();
 		const existing = persons.find((person) => person.name === newName);
@@ -27,7 +22,11 @@ const PersonForm = ({ personsState, nameState, numberState }) => {
 					})
 					.then((response) => {
 						setPersons(persons.map((p) => (p.id !== existing.id ? p : response.data)));
-					});
+						showNotification(`Changed number of ${response.data.name}`, "green");
+					})
+					.catch(() =>
+						showNotification(`Number change of ${response.data.name} failed`, "red"),
+					);
 			}
 			return;
 		}
@@ -35,20 +34,34 @@ const PersonForm = ({ personsState, nameState, numberState }) => {
 			name: newName,
 			number: newNumber,
 		};
-		axios
-			.post("http://localhost:3001/persons", newPerson)
-			.then((response) => setPersons(persons.concat(response.data)));
+		axios.post("http://localhost:3001/persons", newPerson).then((response) => {
+			setPersons(persons.concat(response.data));
+			showNotification(`Added ${response.data.name}`, "green");
+		});
 		setNewName("");
 		setNewNumber("");
 	};
+
 	return (
 		<form onSubmit={addPerson}>
 			<h2>add a new</h2>
 			<div>
-				name: <input value={newName} onChange={updateNewName} />
+				name:{" "}
+				<input
+					value={newName}
+					onChange={(event) => {
+						setNewName(event.target.value);
+					}}
+				/>
 			</div>
 			<div>
-				number: <input value={newNumber} onChange={updateNewNumber} />
+				number:{" "}
+				<input
+					value={newNumber}
+					onChange={(event) => {
+						setNewNumber(event.target.value);
+					}}
+				/>
 			</div>
 			<div>
 				<button onClick={addPerson}>add</button>

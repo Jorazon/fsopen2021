@@ -1,6 +1,27 @@
 import React from "react";
+import axios from "axios";
 
-const Persons = ({ persons, listFilter, deletePerson }) => {
+const Persons = ({ personsState, listFilter, showNotification }) => {
+	const [persons, setPersons] = personsState;
+
+	const deletePerson = (id) => {
+		const match = persons.find((p) => p.id === id);
+		if (window.confirm(`Delete ${match.name}?`)) {
+			axios
+				.delete(`http://localhost:3001/persons/${id}`)
+				.then(() => {
+					showNotification(`${match.name} was removed`, "green");
+				})
+				.catch(() => {
+					showNotification(
+						`Information of ${match.name} has already been removed from the server`,
+						"red",
+					);
+				})
+				.finally(() => setPersons(persons.filter((p) => p.id !== id)));
+		}
+	};
+
 	return (
 		<ul>
 			{persons
