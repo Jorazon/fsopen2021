@@ -21,8 +21,8 @@ const PersonForm = ({ personsState, nameState, numberState, showNotification }) 
 						number: newNumber,
 					})
 					.then((response) => {
-						setPersons(persons.map((p) => (p.id !== existing.id ? p : response.data)));
 						showNotification(`Changed number of ${response.data.name}`, "green");
+						setPersons(persons.map((p) => (p.id !== existing.id ? p : response.data)));
 					})
 					.catch(() =>
 						showNotification(`Number change of ${existing.name} failed`, "red"),
