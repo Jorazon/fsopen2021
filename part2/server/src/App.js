@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Note from "./components/Note";
+import noteService from "./services/notes";
 
 const App = () => {
 	const [notes, setNotes] = useState([]);
@@ -9,24 +9,61 @@ const App = () => {
 
 	useEffect(() => {
 		console.log("effect");
-		axios.get("http://localhost:3001/notes").then((response) => {
-			console.log("promise fulfilled");
-			setNotes(response.data);
+		noteService.getAll().then((response) => {
+			setNotes(response);
 		});
 	}, []);
 	console.log("render", notes.length, "notes");
 
+	const addNote = (event) => {
+		event.preventDefault();
+		const noteObject = {
+			content: newNote,
+			date: new Date(),
+			important: Math.random() > 0.5,
+		};
+
+		noteService.create(noteObject).then((response) => {
+			setNotes(notes.concat(response));
+			setNewNote("");
+		});
+	};
+
+	const toggleImportanceOf = (id) => {
+		const note = notes.find((n) => n.id === id);
+		const changedNote = { ...note, important: !note.important };
+
+		noteService
+			.update(id, changedNote)
+			.then((returnedNote) => {
+				setNotes(notes.map((n) => (n.id !== id ? n : returnedNote)));
+			})
+			.catch((error) => {
+				alert(`the note '${note.content}' was already deleted from server`);
+				setNotes(notes.filter((n) => n.id !== id));
+			});
+	};
+
 	return (
 		<>
-			<table>
-				<tbody>
-					{notes.map((note) => (
-						<tr key={note.id}>
-							<td>{note.content}</td>
-						</tr>
+			<button onClick={() => setShowAll(!showAll)}>
+				{showAll ? "show important" : "show all"}
+			</button>
+			<ul>
+				{notes
+					.filter((note) => note.important || showAll)
+					.map((note) => (
+						<Note
+							note={note}
+							toggleImportance={() => toggleImportanceOf(note.id)}
+							key={note.id}
+						/>
 					))}
-				</tbody>
-			</table>
+			</ul>
+			<form>
+				<input value={newNote} onChange={(event) => setNewNote(event.target.value)} />
+				<button onClick={addNote}>send</button>
+			</form>
 		</>
 	);
 };
