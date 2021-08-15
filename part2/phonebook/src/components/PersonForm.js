@@ -25,7 +25,7 @@ const PersonForm = ({ personsState, nameState, numberState, showNotification }) 
 						showNotification(`Changed number of ${response.data.name}`, "green");
 					})
 					.catch(() =>
-						showNotification(`Number change of ${response.data.name} failed`, "red"),
+						showNotification(`Number change of ${existing.name} failed`, "red"),
 					);
 			}
 			return;
