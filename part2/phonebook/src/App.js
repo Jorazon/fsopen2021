@@ -18,6 +18,14 @@ const App = () => {
 		});
 	}, []);
 
+	const deletePerson = (id) => {
+		if (window.confirm(`Delete ${persons.find((p) => p.id === id).name}?`)) {
+			axios.delete(`http://localhost:3001/persons/${id}`).then(() => {
+				setPersons(persons.filter((p) => p.id !== id));
+			});
+		}
+	};
+
 	return (
 		<div>
 			<h2>Phonebook</h2>
@@ -28,7 +36,7 @@ const App = () => {
 				numberState={[newNumber, setNewNumber]}
 			/>
 			<h2>Numbers</h2>
-			<Persons persons={persons} listFilter={listFilter} />
+			<Persons persons={persons} listFilter={listFilter} deletePerson={deletePerson} />
 		</div>
 	);
 };

@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 
 const PersonForm = ({ personsState, nameState, numberState }) => {
@@ -20,8 +21,11 @@ const PersonForm = ({ personsState, nameState, numberState }) => {
 			name: newName,
 			number: newNumber,
 		};
-		setPersons(persons.concat(newPerson));
+		axios
+			.post("http://localhost:3001/persons", newPerson)
+			.then((response) => setPersons(persons.concat(response.data)));
 		setNewName("");
+		setNewNumber("");
 	};
 	return (
 		<form onSubmit={addPerson}>
@@ -33,7 +37,7 @@ const PersonForm = ({ personsState, nameState, numberState }) => {
 				number: <input value={newNumber} onChange={updateNewNumber} />
 			</div>
 			<div>
-				<button type="submit">add</button>
+				<button onClick={addPerson}>add</button>
 			</div>
 		</form>
 	);
