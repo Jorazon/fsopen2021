@@ -1,4 +1,4 @@
-import express, { request, response } from "express";
+import express from "express";
 const app = express();
 app.use(express.json());
 
@@ -33,7 +33,7 @@ app.get("/api/notes", (request, response) => {
 
 app.get("/api/notes/:id", (request, response) => {
 	const id = Number(request.params.id);
-	const note = notes.find((note) => note.id === id);
+	const note = notes.find((n) => n.id === id);
 
 	if (note) {
 		response.json(note);
@@ -44,7 +44,7 @@ app.get("/api/notes/:id", (request, response) => {
 
 app.delete("/api/notes/:id", (request, response) => {
 	const id = Number(request.params.id);
-	notes = notes.filter((note) => note.id !== id);
+	notes = notes.filter((n) => n.id !== id);
 
 	response.status(204).end();
 });
