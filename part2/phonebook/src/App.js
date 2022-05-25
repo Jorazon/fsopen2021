@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-import axios from "axios";
-
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Notification from "./components/Notification";
+import personService from "./services/personService";
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
@@ -16,12 +15,13 @@ const App = () => {
 	const [messageColor, setMessageColor] = useState("green");
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/persons").then((response) => {
+		personService.getAll().then((response) => {
 			setPersons(response.data);
 		});
 	}, []);
 
 	const showNotification = (text, color) => {
+		//console.log(text);
 		setMessageText(text);
 		setMessageColor(color);
 		setTimeout(() => setMessageText(null), 5000);

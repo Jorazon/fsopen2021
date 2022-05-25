@@ -1,5 +1,5 @@
-import axios from "axios";
 import React from "react";
+import personService from "../services/personService";
 
 const PersonForm = ({ personsState, nameState, numberState, showNotification }) => {
 	const [persons, setPersons] = personsState;
@@ -12,21 +12,16 @@ const PersonForm = ({ personsState, nameState, numberState, showNotification }) 
 		if (existing) {
 			if (
 				window.confirm(
-					`${existing.name} is already added to phonebook, replace the opld number with a sew one?`,
+					`${existing.name} is already added to phonebook, replace old number with new?`,
 				)
 			) {
-				axios
-					.put(`http://localhost:3001/persons/${existing.id}`, {
-						...existing,
-						number: newNumber,
-					})
+				personService
+					.update(existing, newNumber)
 					.then((response) => {
 						showNotification(`Changed number of ${response.data.name}`, "green");
 						setPersons(persons.map((p) => (p.id !== existing.id ? p : response.data)));
 					})
-					.catch(() =>
-						showNotification(`Number change of ${existing.name} failed`, "red"),
-					);
+					.catch((error) => showNotification(error.response.data.error, "red"));
 			}
 			return;
 		}
@@ -34,12 +29,15 @@ const PersonForm = ({ personsState, nameState, numberState, showNotification }) 
 			name: newName,
 			number: newNumber,
 		};
-		axios.post("http://localhost:3001/persons", newPerson).then((response) => {
-			setPersons(persons.concat(response.data));
-			showNotification(`Added ${response.data.name}`, "green");
-		});
-		setNewName("");
-		setNewNumber("");
+		personService
+			.create(newPerson)
+			.then((response) => {
+				setPersons(persons.concat(response.data));
+				showNotification(`Added ${response.data.name}`, "green");
+				setNewName("");
+				setNewNumber("");
+			})
+			.catch((error) => showNotification(error.response.data.error, "red"));
 	};
 
 	return (
